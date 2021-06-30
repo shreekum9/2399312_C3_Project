@@ -3,6 +3,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
@@ -31,7 +33,32 @@ class RestaurantServiceTest {
     	assertThrows(restaurantNotFoundException.class,()->service.findRestaurantByName("Amelie's cafe"));
     }
     
+    @Test
+    public void finding_the_order_value_based_on_matching_list_of_items_should_return_correct_order_value() throws restaurantNotFoundException {
+        LocalTime openingTime = LocalTime.parse("10:30:00");
+        LocalTime closingTime = LocalTime.parse("22:00:00");
+        restaurant = service.addRestaurant("Amelie's cafe","Chennai",openingTime,closingTime);
+        restaurant.addToMenu("Sweet corn soup",119);
+        restaurant.addToMenu("Vegetable lasagne", 269);
+    	List<String> itemNames = new ArrayList<String>();
+    	itemNames.add("Sweet corn soup");
+    	itemNames.add("Vegetable lasagne");
+    	double totalOrderValue = service.getTotalOrderValue(itemNames);
+    	assertEquals(388, totalOrderValue);
+    }
 
+    @Test
+    public void finding_the_order_value_based_on_incorrect_list_of_items_should_return_zero_order_value() throws restaurantNotFoundException {
+        LocalTime openingTime = LocalTime.parse("10:30:00");
+        LocalTime closingTime = LocalTime.parse("22:00:00");
+        restaurant = service.addRestaurant("Amelie's cafe","Chennai",openingTime,closingTime);
+        restaurant.addToMenu("Sweet corn soup",119);
+        restaurant.addToMenu("Vegetable lasagne", 269);
+    	List<String> itemNames = new ArrayList<String>();
+    	itemNames.add("foo bar salad");
+    	double totalOrderValue = service.getTotalOrderValue(itemNames);
+    	assertEquals(0, totalOrderValue);
+    }
     //>>>>>>>>>>>>>>>>>>>>>>ADMIN: ADDING & REMOVING RESTAURANTS<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     @Test
     public void remove_restaurant_should_reduce_list_of_restaurants_size_by_1() throws restaurantNotFoundException {
