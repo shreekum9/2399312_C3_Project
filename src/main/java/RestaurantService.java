@@ -31,5 +31,16 @@ public class RestaurantService {
         return restaurants;
     }
     
-
+    public double getTotalOrderValue(List<String> itemNames) {
+    	double totalOrderValue = 0;
+		for(Restaurant restaurant : restaurants) {
+			for(Item item : restaurant.getMenu()) {
+				if(itemNames.contains(item.getName())) {
+					totalOrderValue = totalOrderValue + item.getPrice();
+				}
+			}
+		}
+    	return totalOrderValue;
+    }
+	
 }
